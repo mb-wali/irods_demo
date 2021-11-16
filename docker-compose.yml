@@ -41,6 +41,28 @@ services:
     # networks:
     #   irods:
 
+  irods-consumer-mike:
+    labels:
+      irods.irods-consumer-mike.description: "catalogue consumer 'mike'"
+    image: irods
+    env_file:
+      irods/env
+    hostname: irods-consumer-mike-zoneA
+    depends_on:
+      - irods-provider
+    volumes:
+      - ./irods/config/setup_irods.input.consumer:/home/irods/setup_irods.input
+      - ./certs:/etc/certs
+    command:
+      - "/home/irods/wait-for-irods-server"
+      - "--wait-extra"
+      - "65"
+      - "--"
+      - "/home/irods/run.sh"
+      - "run-server"
+    # networks:
+    #   irods:
+
 volumes:
   db-data:
   irods-resources:
