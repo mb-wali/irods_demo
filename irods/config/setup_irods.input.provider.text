@@ -1,0 +1,26 @@
+iRODS user: irods
+iRODS group: irods
+iRODS server's role: 1
+ODBC driver for postgres: 2
+Database server's hostname or IP address: db
+Database server's port: 5432
+Database name: ICAT
+Database username: irods
+confirm: y
+Database password: irods
+Salt for passwords stored in the database: <keep default>
+iRODS server's zone name: ZoneOne
+iRODS server's port: 1247
+iRODS port range (begin): 20000
+iRODS port range (end): 20199
+Control Plane port: 1248
+Schema Validation Base URI (or off): <keep default>
+iRODS server's administrator username: rods
+confirm: y
+iRODS server's zone key: 32_characters_are_appr_this_long
+iRODS server's negotiation key (32 characters): 32_characters_are_appr_this_long
+Control Plane key (32 characters): 32_characters_are_appr_this_long
+iRODS server's administrator password: 32_characters_are_appr_this_long
+iRODS Vault directory: <keep default>
+
+

@@ -1,0 +1,137 @@
+#!/bin/bash
+
+# handle command line options
+#
+HOST=irods-provider
+PORT=1247
+MAX_TRIES=15
+WAIT_EXTRA=
+
+function bailout {
+    usage
+    exit 1
+}
+
+while :; do
+    case $1 in
+        -h|--host)
+            if [ "$2" ]; then
+                HOST=$2
+                shift
+            else
+                echo 'ERROR: "--host" requires a non-empty option argument.'
+                bailout
+            fi
+            ;;
+        -p|--port)
+            if [ "$2" ]; then
+                PORT=$2
+                shift
+            else
+                echo 'ERROR: "--port" requires a non-empty option argument.'
+                bailout
+            fi
+            ;;
+        -m|--max-tries)
+            if [ "$2" ]; then
+                MAX_TRIES=$2
+                shift
+            else
+                echo 'ERROR: "--max-tries" requires a non-empty option argument.'
+                bailout
+            fi
+            ;;
+        -w|--wait-extra)
+            if [ "$2" ]; then
+                WAIT_EXTRA=$2
+                shift
+            else
+                echo 'ERROR: "--wait-extra" requires a non-empty option argument.'
+                bailout
+            fi
+            ;;
+        --)
+            if [ "$2" ]; then
+                shift
+                CMD=$@
+            else
+                echo 'ERROR: "--" requires a non-empty option argument, the command to execute.'
+            fi
+            ;;
+        -?*)
+            echo 'WARN: Unknown option (ignored): %s\n' "$1" >&2
+            bailout
+            ;;
+        *) # no more options
+            break
+    esac
+
+    shift
+done
+
+###
+
+function usage {
+    cat << "    EOF"
+    Usage: ${0##*/} [-h|--host <host>] [-p|--port <port>] [-w|--wait-extra] [-m|--max-tries] -- <command>
+
+        -h|--host        iRODS server (default: irods-provider)
+        -p|--port        port (default: 1247)
+        -w|--wait-extra  wait extra n secs after provider seems up
+        -m|--max-tries   max number of retries
+        command     command to run once server is available
+    EOF
+}
+
+function success {
+    echo "[wait-for-irods-server] SUCCESS: iRODS \"$HOST:$PORT\" is up and running"
+
+    if [ -n "$WAIT_EXTRA" ]; then
+        echo "[wait-for-irods-server] wait extra $WAIT_EXTRA "
+
+        ROUNDS=0
+        until [ "$ROUNDS" -ge "$WAIT_EXTRA" ]
+        do
+            echo -n .
+            sleep 1
+            ROUNDS=$((ROUNDS+1))
+        done
+
+        echo
+    fi
+
+    if [ "$CMD" ]; then
+        echo "[wait-for-irods-server] run command"
+        $CMD
+    else
+        echo "[wait-for-irods-server] no command"
+    fi
+
+    exit 0
+}
+
+
+function failure {
+    echo "[wait-for-irods-server] FAIL: iRODS \"$HOST:$PORT\" is down or unresponsive"
+    exit 1
+}
+
+
+function main {
+    TRIES=0
+    until [ "$TRIES" -ge "$MAX_TRIES" ]
+    do
+        timeout --kill-after 2s 1s \
+            /home/irods/check_irods --port $PORT $HOST | grep -E "^OK: up | time=.*" \
+            && success
+
+        WAIT_FOR=$((TRIES/2))
+        echo "[wait-for-irods-server] [$TRIES/$MAX_TRIES] iRODS \"$HOST:$PORT\" not (yet) up, retrying in $WAIT_FOR ..."
+        sleep $WAIT_FOR
+        TRIES=$((TRIES+1))
+    done
+
+    failure
+}
+
+main

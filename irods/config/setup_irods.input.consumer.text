@@ -1,0 +1,17 @@
+iRODS user [irods]:
+iRODS group [irods]:
+iRODS server's role: 2
+iRODS server's zone name [ZoneOne]: ZoneOne
+iRODS catalog (ICAT) host: db
+iRODS server's port [1247]:
+iRODS port range (begin) [20000]:
+iRODS port range (end) [20199]:
+Control Plane port [1248]:
+Schema Validation Base URI (or off) [file:///var/lib/irods/configuration_schemas]:
+iRODS server's administrator username [rods]:
+confirm: yes
+iRODS server's zone key: 32_characters_are_appr_this_long
+iRODS server's negotiation key (32 characters): 32_characters_are_appr_this_long
+Control Plane key (32 characters): 32_characters_are_appr_this_long
+iRODS server's administrator password: 32_characters_are_appr_this_long
+iRODS Vault directory [/var/lib/irods/Vault]:

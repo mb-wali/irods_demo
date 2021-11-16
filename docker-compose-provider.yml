@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+
+  db:
+    labels:
+      irods.db.description: "database used by the catalogue provider"
+    # note: making LOCAL_ZONE mandatory only once is enough, but it needs to stay!
+    hostname: db-zoneA
+    image: postgres:11
+    shm_size: 1gb
+    env_file:
+      db/env
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+    # networks:
+    #   irods:
+
+  irods-provider:
+    labels:
+      irods.irods-provider.description: "catalogue provider, depends on service 'db'"
+    hostname: irods-provider-zoneA
+    image: irods
+    env_file:
+      irods/env
+    depends_on:
+      - db
+    volumes:
+      - ./irods/config/setup_irods.input.provider:/home/irods/setup_irods.input
+      - irods-resources:/var/lib/irods/resources
+      - ./certs:/etc/certs
+    command:
+      - "wait-for-it"
+      - "-t"
+      - "8"
+      - "db:5432"
+      - "--"
+      - "/home/irods/run.sh"
+      - "run-server"
+    # networks:
+    #   irods:
+
+volumes:
+  db-data:
+  irods-resources:
+
+# networks:
+#   irods:
+#     external: true

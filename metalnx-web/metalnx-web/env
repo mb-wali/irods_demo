@@ -1,0 +1,4 @@
+# for use in combination with nginxproxy/nginx-proxy and nginxproxy/acme-companion
+VIRTUAL_HOST=
+VIRTUAL_PORT=8080
+LETSENCRYPT_HOST=

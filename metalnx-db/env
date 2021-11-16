@@ -1,0 +1,3 @@
+POSTGRES_PASSWORD=metalnx
+POSTGRES_USER=metalnx
+POSTGRES_DB=metalnx
