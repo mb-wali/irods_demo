@@ -6,7 +6,7 @@
 
 ## run irods ICAT server
 ```
-docker-compose -f docker-compose.yml up -d
+docker-compose.yml up -d
 ```
 
 

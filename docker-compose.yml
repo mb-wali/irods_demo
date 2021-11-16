@@ -53,6 +53,7 @@ services:
     volumes:
       - ./irods/config/setup_irods.input.consumer:/home/irods/setup_irods.input
       - ./certs:/etc/certs
+      # - ./irods/config/irods_environment.json:/home/irods/.irods/irods_environment.json
     command:
       - "/home/irods/wait-for-irods-server"
       - "--wait-extra"
